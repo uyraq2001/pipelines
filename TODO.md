@@ -9,6 +9,7 @@ ToDo (Jan 27):
 - [ ] Implement test project with both Dagster & Prefect
 - [ ] Create and share GitHub repo with the results
 - [ ] Begin to implement "Pipelines"
+- [ ] `domain_of_url` can be temporarily replaces with builtin function like `upper(str)` (`upper('http://google.com') -> `HTTP://GOOGLE.COM')
 
 
 Recommendations:
