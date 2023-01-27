@@ -10,8 +10,7 @@ It will create a file named `pipeline.py` with the following content:
 
 ```python
 from pipelines import tasks, Pipeline
-from pipelines.tasks import sql_create_table_as, sql \
-                            load_file_to_db, save_table_to_file
+from pipelines.tasks import sql_create_table_as, load_file_to_db, save_table_to_file
 
 NAME = 'test_project'
 SCHEMA = 'public'
