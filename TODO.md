@@ -9,9 +9,9 @@ ToDo (Jan 27):
 - [ ] Implement test project with both Dagster & Prefect
 - [ ] Create and share GitHub repo with the results
 - [ ] Begin to implement "Pipelines"
-- [ ] `domain_of_url` can be temporarily replaces with builtin function like `upper(str)` (`upper('http://google.com') -> `HTTP://GOOGLE.COM')
 
 
 Recommendations:
 - Use Click as a CLI framework — https://click.palletsprojects.com/en/8.1.x/setuptools/
 - Use `entry_points` to make `pipelines` available in as global command line utility.
+- `domain_of_url` can be temporarily replaced with a builtin SQL function like `upper(str)` (`upper('http://google.com') -> `HTTP://GOOGLE.COM')
