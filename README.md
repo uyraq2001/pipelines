@@ -83,6 +83,17 @@ data/original/original.csv
 
 ### Running the pipeline
 
+```shell
+> pipeline list
+Error: No pipeline found in the current directory!
+
+> cd test_project
+> pipeline list
+...
+> pipeline run
+...
+```
+
 Now, when we have all the dependencies in place, we can run the pipeline using `pipelines run`.
 
 ```shell

@@ -15,3 +15,16 @@ Recommendations:
 - Use Click as a CLI framework — https://click.palletsprojects.com/en/8.1.x/setuptools/
 - Use `entry_points` to make `pipelines` available in as global command line utility.
 - `domain_of_url` can be temporarily replaced with a builtin SQL function like `upper(str)` (`upper('http://google.com') -> `HTTP://GOOGLE.COM')
+
+
+ToDo (Feb 3):
+- [ ] finish Dagster/Prefect (1):
+    - [ ] add poetry support (Dagster/Prefect)
+    - [ ] add README.txt
+    - [ ] add CSV files
+- [ ] Pipelines:
+    - [ ] fork this repo
+    - [ ] add poetry support (deps: click)
+    - [ ] > pipeline list
+    - [ ] > pipeline run (fake)
+    - [ ] > poetry run pipeline run  # should work!
