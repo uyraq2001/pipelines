@@ -1,3 +1,7 @@
+import sqlite3
+import csv
+from sqlite3 import Error
+
 class BaseTask:
     """Base Pipeline Task"""
 
@@ -23,6 +27,24 @@ class CopyToFile(BaseTask):
         return f'{self.table} -> {self.output_file}'
 
     def run(self):
+        file = open(self.output_file, 'w', newline='')
+        writer = csv.writer(file)
+        try:
+            con = sqlite3.connect('pipesql.db')
+            cursor = con.cursor()
+            cursor.execute(f"PRAGMA table_info('{self.table}')")
+            t = cursor.fetchall()
+            headers = [i[1] for i in t]
+            writer.writerow(headers)
+            cursor.execute(f"SELECT * FROM {self.table}")
+            t = cursor.fetchall()
+            for i in t:
+                 writer.writerow(i)
+            con.commit()
+        except Error as er:
+            print(er.args)
+        finally:
+            con.close()
         print(f"Copy table `{self.table}` to file `{self.output_file}`")
 
 
@@ -37,6 +59,21 @@ class LoadFile(BaseTask):
         return f'{self.input_file} -> {self.table}'
 
     def run(self):
+        csvfile = open(self.input_file)
+        reader = csv.DictReader(csvfile)
+        headers = reader.fieldnames[0].split(',')
+        try:
+            con = sqlite3.connect('pipesql.db')
+            cursor = con.cursor()
+            cursor.execute('CREATE TABLE ' + self.table + '(' + ','.join(headers) + ')')
+            to_db = [i[','.join(headers)].split(',') for i in reader]
+            cursor.executemany('INSERT INTO ' + self.table + ' (' + ','.join(headers) + ') VALUES (?' + ', ?' * (len(headers) - 1) + ');', to_db)
+            cursor.execute('SELECT * FROM ' + self.table)
+            con.commit()
+        except Error as er:
+            print(er.args)
+        finally:
+            con.close()
         print(f"Load file `{self.input_file}` to table `{self.table}`")
 
 
@@ -51,6 +88,15 @@ class RunSQL(BaseTask):
         return f'{self.title}'
 
     def run(self):
+        try:
+            con = sqlite3.connect('pipesql.db')
+            cursor = con.cursor()
+            cursor.execute(self.sql_query)
+            con.commit()
+        except Error as er:
+            print(er.args)
+        finally:
+            con.close()
         print(f"Run SQL ({self.title}):\n{self.sql_query}")
 
 
@@ -67,4 +113,27 @@ class CTAS(BaseTask):
         return f'{self.title}'
 
     def run(self):
+        try:
+            con = sqlite3.connect('pipesql.db')
+            cursor = con.cursor()
+            t = f"CREATE TABLE {self.table} AS {self.sql_query}"
+            cursor.execute(f"CREATE TABLE {self.table} AS {self.sql_query}")
+            con.commit()
+        except Error as er:
+            print(er.args)
+        finally:
+            con.close()
         print(f"Create table `{self.table}` as SELECT:\n{self.sql_query}")
+
+
+LoadFile(input_file='original\\original.csv', table='original').run()
+CTAS(table='norm',sql_query='''select *, url from original;''').run()
+CopyToFile(
+        table='norm',
+        output_file='norm.csv',
+    ).run()
+
+    # clean up:
+RunSQL('drop table original').run()
+RunSQL('drop table norm').run()
+

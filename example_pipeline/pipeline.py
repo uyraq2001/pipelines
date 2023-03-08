@@ -6,22 +6,16 @@ VERSION = '2023'
 
 
 TASKS = [
-    tasks.LoadFile(input_file='original/original.csv', table='original'),
-    tasks.CTAS(
-        table='norm',
-        sql_query='''
-            select *, domain_of_url(url)
-            from {original};
-        '''
-    ),
+    tasks.LoadFile(input_file='original\\original.csv', table='original'),
+    tasks.CTAS(table='norm',sql_query='''select *, url from original;'''),
     tasks.CopyToFile(
         table='norm',
-        output_file='norm',
+        output_file='norm.csv',
     ),
 
     # clean up:
-    tasks.RunSQL('drop table {original}'),
-    tasks.RunSQL('drop table {norm}'),
+    tasks.RunSQL('drop table original'),
+    tasks.RunSQL('drop table norm'),
 ]
 
 
