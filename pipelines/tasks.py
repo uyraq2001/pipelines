@@ -1,6 +1,7 @@
 import sqlite3
 import csv
 from sqlite3 import Error
+import pipelines.funcs as funcs
 
 class BaseTask:
     """Base Pipeline Task"""
@@ -91,6 +92,8 @@ class RunSQL(BaseTask):
         try:
             con = sqlite3.connect('pipesql.db')
             cursor = con.cursor()
+            for key, value in funcs.funcs.items():
+                con.create_function(key.__name__, value, key)
             cursor.execute(self.sql_query)
             con.commit()
         except Error as er:
@@ -116,6 +119,8 @@ class CTAS(BaseTask):
         try:
             con = sqlite3.connect('pipesql.db')
             cursor = con.cursor()
+            for key, value in funcs.funcs.items():
+                con.create_function(key.__name__, value, key)
             t = f"CREATE TABLE {self.table} AS {self.sql_query}"
             cursor.execute(f"CREATE TABLE {self.table} AS {self.sql_query}")
             con.commit()
@@ -126,14 +131,14 @@ class CTAS(BaseTask):
         print(f"Create table `{self.table}` as SELECT:\n{self.sql_query}")
 
 
-LoadFile(input_file='original\\original.csv', table='original').run()
-CTAS(table='norm',sql_query='''select *, url from original;''').run()
-CopyToFile(
-        table='norm',
-        output_file='norm.csv',
-    ).run()
+# LoadFile(input_file='original\\original.csv', table='original').run()
+# CTAS(table='norm',sql_query='''select *, url from original;''').run()
+# CopyToFile(
+#         table='norm',
+#         output_file='norm.csv',
+#     ).run()
 
-    # clean up:
-RunSQL('drop table original').run()
-RunSQL('drop table norm').run()
+#     # clean up:
+# RunSQL('drop table original').run()
+# RunSQL('drop table norm').run()
 
